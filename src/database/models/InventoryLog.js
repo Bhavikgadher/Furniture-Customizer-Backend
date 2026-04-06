@@ -14,7 +14,8 @@ const InventoryLog = sequelize.define('InventoryLog', {
   },
   change_type: {
     type: DataTypes.ENUM('IN', 'OUT'),
-    allowNull: false
+    allowNull: false,
+    defaultValue: 'IN'
   },
   quantity: {
     type: DataTypes.INTEGER,

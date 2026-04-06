@@ -15,7 +15,8 @@ const Coupon = sequelize.define('Coupon', {
   },
   discount_type: {
     type: DataTypes.ENUM('percentage', 'fixed'),
-    allowNull: false
+    allowNull: false,
+    defaultValue: 'percentage'
   },
   value: {
     type: DataTypes.DECIMAL(10, 2),
