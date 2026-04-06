@@ -1,0 +1,400 @@
+[
+  {
+    "application": "MainBackend",
+    "architecture": "monolith",
+    "version": "v1",
+    "module": "auth",
+    "basePath": "/api/auth",
+    "authentication": {
+      "type": "jwt",
+      "required": false
+    },
+    "apis": [
+      {
+        "name": "Login",
+        "method": "POST",
+        "path": "/login",
+        "fullPath": "/api/auth/login",
+        "description": "Authenticate admin user and issue JWT tokens",
+        "request": {
+          "body": {
+            "email": { "type": "string", "required": true },
+            "password": { "type": "string", "required": true }
+          }
+        },
+        "response": {
+          "success": {
+            "token": "string",
+            "refreshToken": "string",
+            "expiresIn": "number",
+            "user": {
+              "id": "uuid",
+              "name": "string",
+              "email": "string",
+              "role": "string",
+              "avatarUrl": "string"
+            }
+          }
+        },
+        "dbMapping": {
+          "tables": ["users", "roles", "refresh_tokens"],
+          "fields": {
+            "email": "users.email",
+            "password": "users.password_hash",
+            "role": "roles.name",
+            "avatarUrl": "users.avatar_url",
+            "refreshToken": "refresh_tokens.token"
+          }
+        }
+      },
+      {
+        "name": "Logout",
+        "method": "POST",
+        "path": "/logout",
+        "fullPath": "/api/auth/logout",
+        "description": "Invalidate refresh token",
+        "request": {
+          "body": {
+            "refreshToken": { "type": "string", "required": true }
+          }
+        },
+        "response": {
+          "success": {
+            "message": "Logged out successfully"
+          }
+        },
+        "dbMapping": {
+          "table": "refresh_tokens",
+          "fields": {
+            "refreshToken": "refresh_tokens.token"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "application": "MainBackend",
+    "architecture": "monolith",
+    "version": "v1",
+    "module": "adminuser",
+    "basePath": "/api/admin/users",
+    "authentication": {
+      "type": "jwt",
+      "required": true
+    },
+    "apis": [
+      {
+        "name": "ListUsers",
+        "method": "GET",
+        "path": "",
+        "fullPath": "/api/admin/users",
+        "description": "Paginated user listing with filters",
+        "request": {
+          "query": {
+            "page": { "type": "number", "required": false },
+            "limit": { "type": "number", "required": false },
+            "search": { "type": "string", "required": false },
+            "role": { "type": "string", "required": false },
+            "status": { "type": "string", "required": false }
+          }
+        },
+        "response": {
+          "success": {
+            "users": [
+              {
+                "id": "uuid",
+                "name": "string",
+                "email": "string",
+                "role": "string",
+                "status": "string",
+                "joinDate": "datetime",
+                "avatarUrl": "string"
+              }
+            ],
+            "pagination": {
+              "page": "number",
+              "limit": "number",
+              "total": "number",
+              "totalPages": "number"
+            }
+          }
+        },
+        "dbMapping": {
+          "tables": ["users", "roles"],
+          "fields": {
+            "id": "users.id",
+            "name": "users.full_name",
+            "email": "users.email",
+            "role": "roles.name",
+            "status": "users.is_active",
+            "joinDate": "users.created_at",
+            "avatarUrl": "users.avatar_url"
+          }
+        }
+      },
+      {
+        "name": "CreateUser",
+        "method": "POST",
+        "path": "",
+        "fullPath": "/api/admin/users",
+        "description": "Create new admin or customer user",
+        "request": {
+          "body": {
+            "name": { "type": "string", "required": true },
+            "email": { "type": "string", "required": true },
+            "role": { "type": "string", "required": true },
+            "status": { "type": "string", "required": true }
+          }
+        },
+        "response": {
+          "success": {
+            "id": "uuid",
+            "createdAt": "datetime"
+          }
+        },
+        "dbMapping": {
+          "tables": ["users", "roles"],
+          "fields": {
+            "name": "users.full_name",
+            "email": "users.email",
+            "role": "users.role_id",
+            "status": "users.is_active"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "application": "MainBackend",
+    "architecture": "monolith",
+    "version": "v1",
+    "module": "vendor",
+    "basePath": "/api/admin/vendors",
+    "authentication": {
+      "type": "jwt",
+      "required": true
+    },
+    "apis": [
+      {
+        "name": "ListVendors",
+        "method": "GET",
+        "path": "",
+        "fullPath": "/api/admin/vendors",
+        "description": "List vendors by status",
+        "request": {
+          "query": {
+            "status": { "type": "string", "required": false },
+            "page": { "type": "number", "required": false },
+            "limit": { "type": "number", "required": false }
+          }
+        },
+        "response": {
+          "success": {
+            "vendors": [
+              {
+                "id": "uuid",
+                "companyName": "string",
+                "status": "string",
+                "createdAt": "datetime"
+              }
+            ]
+          }
+        },
+        "dbMapping": {
+          "table": "vendors",
+          "fields": {
+            "id": "vendors.id",
+            "companyName": "vendors.company_name",
+            "status": "vendors.status",
+            "createdAt": "vendors.created_at"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "application": "MainBackend",
+    "architecture": "monolith",
+    "version": "v1",
+    "module": "product",
+    "basePath": "/api/admin/products",
+    "authentication": {
+      "type": "jwt",
+      "required": true
+    },
+    "apis": [
+      {
+        "name": "CreateProduct",
+        "method": "POST",
+        "path": "",
+        "fullPath": "/api/admin/products",
+        "description": "Create new furniture model",
+        "request": {
+          "body": {
+            "name": { "type": "string", "required": true },
+            "categoryId": { "type": "uuid", "required": true },
+            "vendorId": { "type": "uuid", "required": true },
+            "basePrice": { "type": "number", "required": true },
+            "sku": { "type": "string", "required": true },
+            "status": { "type": "string", "required": true }
+          }
+        },
+        "response": {
+          "success": {
+            "id": "uuid",
+            "createdAt": "datetime"
+          }
+        },
+        "dbMapping": {
+          "table": "furniture_models",
+          "fields": {
+            "name": "furniture_models.name",
+            "categoryId": "furniture_models.category_id",
+            "vendorId": "furniture_models.vendor_id",
+            "basePrice": "furniture_models.base_price",
+            "sku": "furniture_models.sku",
+            "status": "furniture_models.status"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "application": "MainBackend",
+    "architecture": "monolith",
+    "version": "v1",
+    "module": "order",
+    "basePath": "/api/admin/orders",
+    "authentication": {
+      "type": "jwt",
+      "required": true
+    },
+    "apis": [
+      {
+        "name": "ListOrders",
+        "method": "GET",
+        "path": "",
+        "fullPath": "/api/admin/orders",
+        "description": "Paginated order listing",
+        "request": {
+          "query": {
+            "status": { "type": "string", "required": false },
+            "payment": { "type": "string", "required": false },
+            "page": { "type": "number", "required": false },
+            "limit": { "type": "number", "required": false }
+          }
+        },
+        "response": {
+          "success": {
+            "orders": [
+              {
+                "id": "uuid",
+                "orderNumber": "string",
+                "customerName": "string",
+                "total": "number",
+                "paymentStatus": "string",
+                "orderStatus": "string",
+                "createdAt": "datetime"
+              }
+            ]
+          }
+        },
+        "dbMapping": {
+          "tables": ["orders", "users"],
+          "fields": {
+            "orderNumber": "orders.order_number",
+            "customerName": "users.full_name",
+            "total": "orders.final_amount",
+            "paymentStatus": "orders.payment_status",
+            "orderStatus": "orders.status",
+            "createdAt": "orders.created_at"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "application": "MainBackend",
+    "architecture": "monolith",
+    "version": "v1",
+    "module": "coupon",
+    "basePath": "/api/admin/coupons",
+    "authentication": {
+      "type": "jwt",
+      "required": true
+    },
+    "apis": [
+      {
+        "name": "CreateCoupon",
+        "method": "POST",
+        "path": "",
+        "fullPath": "/api/admin/coupons",
+        "description": "Create new discount coupon",
+        "request": {
+          "body": {
+            "code": { "type": "string", "required": true },
+            "discountType": { "type": "string", "required": true },
+            "discountValue": { "type": "number", "required": true },
+            "expiryDate": { "type": "datetime", "required": true },
+            "usageLimit": { "type": "number", "required": false }
+          }
+        },
+        "response": {
+          "success": {
+            "id": "uuid",
+            "createdAt": "datetime"
+          }
+        },
+        "dbMapping": {
+          "table": "coupons",
+          "fields": {
+            "code": "coupons.code",
+            "discountType": "coupons.discount_type",
+            "discountValue": "coupons.value",
+            "expiryDate": "coupons.expiry_date",
+            "usageLimit": "coupons.usage_limit"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "application": "MainBackend",
+    "architecture": "monolith",
+    "version": "v1",
+    "module": "security",
+    "basePath": "/api/admin/security",
+    "authentication": {
+      "type": "jwt",
+      "required": true
+    },
+    "apis": [
+      {
+        "name": "ListRoles",
+        "method": "GET",
+        "path": "/roles",
+        "fullPath": "/api/admin/security/roles",
+        "description": "List system roles",
+        "response": {
+          "success": {
+            "roles": [
+              {
+                "id": "uuid",
+                "name": "string",
+                "description": "string"
+              }
+            ]
+          }
+        },
+        "dbMapping": {
+          "table": "roles",
+          "fields": {
+            "id": "roles.id",
+            "name": "roles.name",
+            "description": "roles.description"
+          }
+        }
+      }
+    ]
+  }
+]

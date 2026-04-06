@@ -1,0 +1,660 @@
+{
+  "info": {
+    "name": "Customer APIs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:3000" },
+    { "key": "token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/customer/auth/register",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"full_name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"secret123\",\n  \"phone\": \"9876543210\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": ["const res = pm.response.json();", "if (res.data && res.data.token) {", "  pm.collectionVariables.set('token', res.data.token);", "}"]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/customer/auth/login",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"secret123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/customer/auth/logout",
+            "header": []
+          }
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/customer/auth/forgot-password",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/customer/auth/reset-password",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"your_reset_token_here\",\n  \"newPassword\": \"newSecret123\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Profile",
+      "item": [
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/customer/profile",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/customer/profile",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"full_name\": \"John Updated\",\n  \"phone\": \"9999999999\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/customer/profile/change-password",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"secret123\",\n  \"newPassword\": \"newSecret456\"\n}"
+            }
+          }
+        },
+        {
+          "name": "List Addresses",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/customer/profile/addresses",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "Add Address",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/customer/profile/addresses",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"address_line1\": \"123 Main St\",\n  \"city\": \"Mumbai\",\n  \"state\": \"Maharashtra\",\n  \"pincode\": \"400001\",\n  \"country\": \"India\",\n  \"is_default\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Address",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/customer/profile/addresses/:id",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"city\": \"Pune\",\n  \"pincode\": \"411001\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Address",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/api/customer/profile/addresses/:id",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "Set Default Address",
+          "request": {
+            "method": "PATCH",
+            "url": "{{base_url}}/api/customer/profile/addresses/:id/default",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Catalog",
+      "item": [
+        {
+          "name": "List Products",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/customer/catalog/products?page=1&limit=12&sort=newest",
+              "host": ["{{base_url}}"],
+              "path": ["api", "customer", "catalog", "products"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "12" },
+                { "key": "sort", "value": "newest" },
+                { "key": "category", "value": "", "disabled": true },
+                { "key": "search", "value": "", "disabled": true }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Product By ID",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/customer/catalog/products/:id",
+            "header": []
+          }
+        },
+        {
+          "name": "Get Product Reviews",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/customer/catalog/products/:id/reviews?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "customer", "catalog", "products", ":id", "reviews"],
+              "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }]
+            }
+          }
+        },
+        {
+          "name": "List Categories",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/customer/catalog/categories"
+          }
+        },
+        {
+          "name": "Products By Category",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/customer/catalog/categories/:id/products?page=1&limit=12",
+              "host": ["{{base_url}}"],
+              "path": ["api", "customer", "catalog", "categories", ":id", "products"],
+              "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "12" }]
+            }
+          }
+        },
+        {
+          "name": "Search Products",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/customer/catalog/search?q=sofa&page=1&limit=12",
+              "host": ["{{base_url}}"],
+              "path": ["api", "customer", "catalog", "search"],
+              "query": [{ "key": "q", "value": "sofa" }, { "key": "page", "value": "1" }, { "key": "limit", "value": "12" }]
+            }
+          }
+        },
+        {
+          "name": "Featured Products",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/customer/catalog/featured"
+          }
+        },
+        {
+          "name": "Vendor Store",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/customer/catalog/vendor/:id?page=1&limit=12",
+              "host": ["{{base_url}}"],
+              "path": ["api", "customer", "catalog", "vendor", ":id"],
+              "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "12" }]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Customizer",
+      "item": [
+        {
+          "name": "Get Product Options",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/customer/customizer/product/:id/options"
+          }
+        },
+        {
+          "name": "Calculate Price",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/customer/customizer/calculate-price",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model_id\": \"your-model-uuid\",\n  \"material_id\": \"your-material-uuid\",\n  \"color_id\": \"your-color-uuid\",\n  \"fabric_id\": \"your-fabric-uuid\",\n  \"size_id\": \"your-size-uuid\",\n  \"addon_ids\": []\n}"
+            }
+          }
+        },
+        {
+          "name": "Save Design",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/customer/customizer/save-design",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model_id\": \"your-model-uuid\",\n  \"material_id\": \"your-material-uuid\",\n  \"color_id\": \"your-color-uuid\",\n  \"fabric_id\": \"your-fabric-uuid\",\n  \"size_id\": \"your-size-uuid\",\n  \"addon_ids\": []\n}"
+            }
+          }
+        },
+        {
+          "name": "List Designs",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/customer/customizer/designs",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "Get Design By ID",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/customer/customizer/designs/:id",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "Delete Design",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/api/customer/customizer/designs/:id",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cart",
+      "item": [
+        {
+          "name": "Get Cart",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/customer/cart",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "Add Item",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/customer/cart/items",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"saved_design_id\": \"your-design-uuid\",\n  \"quantity\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Item",
+          "request": {
+            "method": "PATCH",
+            "url": "{{base_url}}/api/customer/cart/items/:id",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 3\n}"
+            }
+          }
+        },
+        {
+          "name": "Remove Item",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/api/customer/cart/items/:id",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "Clear Cart",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/api/customer/cart",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Checkout",
+      "item": [
+        {
+          "name": "Validate Cart",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/customer/checkout/validate",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "Apply Coupon",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/customer/checkout/apply-coupon",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"SAVE10\",\n  \"orderTotal\": 25000\n}"
+            }
+          }
+        },
+        {
+          "name": "Create Order",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/customer/checkout/create-order",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"address_id\": \"your-address-uuid\",\n  \"coupon_code\": \"\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "List Orders",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/customer/orders?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "customer", "orders"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "status", "value": "", "disabled": true }
+              ]
+            },
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "Get Order By ID",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/customer/orders/:id",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "Cancel Order",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/customer/orders/:id/cancel",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "Initiate Payment",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/customer/payments/initiate",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"order_id\": \"your-order-uuid\",\n  \"payment_method\": \"upi\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Verify Payment",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/customer/payments/verify",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"order_id\": \"your-order-uuid\",\n  \"transaction_id\": \"TXN123456789\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Payment History",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/customer/payments/history",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reviews",
+      "item": [
+        {
+          "name": "My Reviews",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/customer/reviews/my-reviews",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "Create Review",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/customer/reviews",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model_id\": \"your-model-uuid\",\n  \"rating\": 5,\n  \"comment\": \"Excellent quality and finish!\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Review",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/api/customer/reviews/:id",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 4,\n  \"comment\": \"Updated comment\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Review",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/api/customer/reviews/:id",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Wishlist",
+      "item": [
+        {
+          "name": "Get Wishlist",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/customer/wishlist",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "Add to Wishlist",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/customer/wishlist/items",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model_id\": \"your-model-uuid\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Remove from Wishlist",
+          "request": {
+            "method": "DELETE",
+            "url": "{{base_url}}/api/customer/wishlist/items/:id",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "Check Wishlist Item",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/customer/wishlist/check/:modelId",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Consultations",
+      "item": [
+        {
+          "name": "List Designers",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/customer/consultations/designers"
+          }
+        },
+        {
+          "name": "Book Consultation",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/customer/consultations/book",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"designer_id\": \"your-designer-uuid\",\n  \"scheduled_at\": \"2026-04-15T10:00:00.000Z\",\n  \"notes\": \"Looking for a modern living room setup\"\n}"
+            }
+          }
+        },
+        {
+          "name": "List My Consultations",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/customer/consultations",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "Get Consultation By ID",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/customer/consultations/:id",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "Cancel Consultation",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/customer/consultations/:id/cancel",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "Get Notifications",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/customer/notifications?page=1&limit=20",
+              "host": ["{{base_url}}"],
+              "path": ["api", "customer", "notifications"],
+              "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "20" }]
+            },
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "Unread Count",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/customer/notifications/unread-count",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "Mark As Read",
+          "request": {
+            "method": "PATCH",
+            "url": "{{base_url}}/api/customer/notifications/:id/read",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        },
+        {
+          "name": "Mark All As Read",
+          "request": {
+            "method": "PATCH",
+            "url": "{{base_url}}/api/customer/notifications/read-all",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+# Dependencies (reinstalled inside image)
+node_modules
+
+# Dev / local config
+.env
+.env.*
+!.env.example
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Docs & non-runtime files
+docs
+README.md
+*.md
+api-specifications.json
+API_ENDPOINTS.md
+IMPLEMENTATION_SUMMARY.md
+
+# Editor / OS
+.vscode
+.idea
+*.DS_Store
+Thumbs.db
+
+# Docker files themselves (no need to copy into image)
+Dockerfile
+.dockerignore
